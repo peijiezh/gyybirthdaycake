@@ -124,3 +124,96 @@ body {
         max-width: 400px;
     }
 }
+
+
+/* Mobile-specific styles */
+@media screen and (max-width: 768px) {
+    /* Layout changes for mobile */
+    #birthday-content {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    #scene-container {
+        height: 60vh;
+        width: 100%;
+        min-width: auto;
+    }
+    
+    #wishes-container {
+        width: 100%;
+        margin-top: 15px;
+        padding: 15px;
+    }
+    
+    /* Envelope adjustments for smaller screens */
+    #envelope {
+        width: 250px;
+        height: 170px;
+    }
+    
+    #envelope::before {
+        border-left: 125px solid transparent;
+        border-right: 125px solid transparent;
+        border-bottom: 45px solid #FFB6C1;
+        top: -45px;
+    }
+}
+
+/* iPhone-specific styles */
+@media screen and (max-width: 414px) {
+    #envelope {
+        width: 220px;
+        height: 150px;
+    }
+    
+    #envelope::before {
+        border-left: 110px solid transparent;
+        border-right: 110px solid transparent;
+        border-bottom: 40px solid #FFB6C1;
+        top: -40px;
+    }
+    
+    #wishes-container h1 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .wishes-text p {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+}
+
+/* Fix for touch devices */
+@media (hover: none) and (pointer: coarse) {
+    #envelope:hover {
+        transform: scale(1.02); /* Smaller scale effect for touch devices */
+    }
+    
+    #envelope:active {
+        transform: scale(1.05);
+    }
+}
+
+
+/* Mobile device specific class */
+body.mobile-device {
+    /* Fixed height to avoid issues with browser chrome appearing/disappearing */
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Fix for iOS Safari 100vh issues */
+@supports (-webkit-touch-callout: none) {
+    #envelope-container, #birthday-content {
+        height: -webkit-fill-available;
+    }
+}
+
+/* Ensure the canvas can be interacted with properly on mobile */
+canvas {
+    touch-action: none;
+}

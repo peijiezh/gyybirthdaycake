@@ -48,7 +48,10 @@ function openEnvelope() {
 
 // Create confetti effect
 function createConfetti() {
-    for (let i = 0; i < 150; i++) {
+    // Reduce the number of confetti pieces on mobile to improve performance
+    const confettiCount = window.innerWidth <= 768 ? 75 : 150;
+
+    for (let i = 0; i < confettiCount; i++) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
         
@@ -126,8 +129,16 @@ function initThreeJs() {
             0.1,
             1000
         );
+
         camera.position.z = 7;
         camera.position.y = 2;
+    
+    // After creating the camera, adjust for device viewport
+    if (window.innerWidth <= 768) {
+        // For mobile, position the camera slightly farther away
+        camera.position.z = 8.5;
+        camera.position.y = 1.8;
+    }
         
         // Create renderer
         renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -361,17 +372,15 @@ if (document.readyState === "complete" || document.readyState === "interactive")
     setTimeout(init, 1);
 }
 
-// Add this function to your script.js file
+// Add touch support to your manual controls
 function implementManualControls() {
     console.log("Implementing manual controls...");
     
-    // Remove the existing event listeners if any
     const canvas = renderer.domElement;
-    
-    // Basic manual rotation with mouse drag
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
     
+    // Mouse events
     canvas.addEventListener('mousedown', function(event) {
         isDragging = true;
         previousMousePosition = { 
@@ -383,22 +392,7 @@ function implementManualControls() {
     
     canvas.addEventListener('mousemove', function(event) {
         if (isDragging) {
-            const deltaMove = { 
-                x: event.clientX - previousMousePosition.x, 
-                y: event.clientY - previousMousePosition.y 
-            };
-            
-            if (cake) {
-                // Rotate cake based on mouse movement
-                cake.rotation.y += deltaMove.x * 0.01;
-                cake.rotation.x += deltaMove.y * 0.01;
-            }
-            
-            previousMousePosition = {
-                x: event.clientX,
-                y: event.clientY
-            };
-            
+            handleDragMovement(event.clientX, event.clientY);
             event.preventDefault();
         }
     });
@@ -412,24 +406,113 @@ function implementManualControls() {
         isDragging = false;
     });
     
-    // Basic zoom with mouse wheel
+    // Touch events for mobile
+    canvas.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 1) {
+            isDragging = true;
+            previousMousePosition = { 
+                x: event.touches[0].clientX, 
+                y: event.touches[0].clientY 
+            };
+        }
+        // Don't prevent default here to allow scrolling on mobile
+    });
+    
+    canvas.addEventListener('touchmove', function(event) {
+        if (isDragging && event.touches.length === 1) {
+            handleDragMovement(event.touches[0].clientX, event.touches[0].clientY);
+            event.preventDefault(); // Prevent scrolling while rotating
+        }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', function() {
+        isDragging = false;
+    });
+    
+    // Common drag handler function
+    function handleDragMovement(clientX, clientY) {
+        const deltaMove = { 
+            x: clientX - previousMousePosition.x, 
+            y: clientY - previousMousePosition.y 
+        };
+        
+        if (cake) {
+            // Rotate cake based on movement
+            cake.rotation.y += deltaMove.x * 0.01;
+            cake.rotation.x += deltaMove.y * 0.01;
+        }
+        
+        previousMousePosition = {
+            x: clientX,
+            y: clientY
+        };
+    }
+    
+    // Pinch zoom for mobile
+    let initialPinchDistance = 0;
+    
+    canvas.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 2) {
+            initialPinchDistance = getPinchDistance(event);
+        }
+    });
+    
+    canvas.addEventListener('touchmove', function(event) {
+        if (event.touches.length === 2) {
+            const currentDistance = getPinchDistance(event);
+            const delta = (currentDistance - initialPinchDistance) * 0.01;
+            
+            if (camera) {
+                camera.position.z -= delta;
+                camera.position.z = Math.max(3, Math.min(12, camera.position.z));
+                initialPinchDistance = currentDistance;
+            }
+            
+            event.preventDefault();
+        }
+    }, { passive: false });
+    
+    function getPinchDistance(event) {
+        const dx = event.touches[0].clientX - event.touches[1].clientX;
+        const dy = event.touches[0].clientY - event.touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+    
+    // Mouse wheel zoom
     canvas.addEventListener('wheel', function(event) {
         if (camera) {
             event.preventDefault();
-            
-            // Adjust camera position for zoom
             const zoomSpeed = 0.1;
             const delta = -Math.sign(event.deltaY) * zoomSpeed;
             
             camera.position.z += delta;
-            
-            // Limit how close/far the camera can go
             camera.position.z = Math.max(3, Math.min(12, camera.position.z));
         }
     }, { passive: false });
     
-    console.log("Manual controls implemented");
+    console.log("Manual and touch controls implemented");
 }
+
+// Adjust camera for better mobile view
+function initThreeJs() {
+    // ... existing code ...
+    
+    // After creating the camera, adjust for device viewport
+    if (window.innerWidth <= 768) {
+        // For mobile, position the camera slightly farther away
+        camera.position.z = 8.5;
+        camera.position.y = 1.8;
+    }
+    
+    // ... rest of the existing code ...
+}
+
+
+// Handle orientation changes on mobile devices
+window.addEventListener('orientationchange', function() {
+    // Wait a bit for the orientation change to complete
+    setTimeout(onWindowResize, 300);
+});
 
 
 // Fix for OrbitControls initialization
