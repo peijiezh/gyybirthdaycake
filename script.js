@@ -1,22 +1,29 @@
 // Variables for Three.js scene
 let scene, camera, renderer, controls, cake;
 
-// DOM Elements
-const envelopeContainer = document.getElementById('envelope-container');
-const envelope = document.getElementById('envelope');
-const birthdayContent = document.getElementById('birthday-content');
-const sceneContainer = document.getElementById('scene-container');
+// DOM Elements - using querySelector instead of getElementById for better compatibility
+const envelopeContainer = document.querySelector('#envelope-container');
+const envelope = document.querySelector('#envelope');
+const birthdayContent = document.querySelector('#birthday-content');
+const sceneContainer = document.querySelector('#scene-container');
 
 // Initialize the application
 function init() {
+    console.log("Initializing birthday card...");
+    
+    // Make sure DOM elements are available
+    if (!envelope || !envelopeContainer || !birthdayContent || !sceneContainer) {
+        console.error("Required DOM elements not found!");
+        return;
+    }
+    
     // Add event listener to envelope
     envelope.addEventListener('click', openEnvelope);
     
     // Add window resize listener
     window.addEventListener('resize', onWindowResize);
     
-    // For debugging - remove in production
-    console.log("Birthday card initialized!");
+    console.log("Birthday card initialized successfully!");
 }
 
 // Function to handle envelope click
@@ -102,6 +109,12 @@ function initThreeJs() {
     console.log("Initializing Three.js scene...");
     
     try {
+        // Verify Three.js is available
+        if (typeof THREE === 'undefined') {
+            console.error("THREE is not defined! Three.js library is not loaded correctly.");
+            return;
+        }
+        
         // Create scene
         scene = new THREE.Scene();
         scene.background = new THREE.Color('#FFF5EE');
@@ -121,10 +134,16 @@ function initThreeJs() {
         renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
         sceneContainer.appendChild(renderer.domElement);
         
-        // Add OrbitControls
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
+        // Check if OrbitControls is available
+        if (typeof THREE.OrbitControls === 'undefined') {
+            console.error("THREE.OrbitControls is not defined! OrbitControls is not loaded correctly.");
+            // Continue without OrbitControls
+        } else {
+            // Add OrbitControls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+        }
         
         // Add lights
         addLights();
@@ -175,44 +194,46 @@ function createCake() {
         // Create bottom layer
         const bottomGeometry = new THREE.CylinderGeometry(2, 2, 0.5, 32);
         const bottomLayer = new THREE.Mesh(bottomGeometry, bottomLayerMaterial);
-        bottomLayer.position.y = 0.25;
+        bottomLayer.position.y = 0.25; // Half of the bottom layer height
         cake.add(bottomLayer);
         
         // Bottom layer frosting
         const bottomFrostGeometry = new THREE.TorusGeometry(2, 0.1, 16, 100);
         const bottomFrosting = new THREE.Mesh(bottomFrostGeometry, frostingMaterial);
-        bottomFrosting.position.y = 0.5;
+        bottomFrosting.position.y = 0.5; // Top of the bottom layer
         bottomFrosting.rotation.x = Math.PI / 2;
         cake.add(bottomFrosting);
         
-        // Create middle layer
+        // Create middle layer - POSITION ADJUSTED
         const middleGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.5, 32);
         const middleLayer = new THREE.Mesh(middleGeometry, middleLayerMaterial);
-        middleLayer.position.y = 0.75 + 0.25;
+        middleLayer.position.y = 0.5 + 0.25; // Bottom layer top + half of middle layer height
         cake.add(middleLayer);
         
-        // Middle layer frosting
+        // Middle layer frosting - POSITION ADJUSTED
         const middleFrostGeometry = new THREE.TorusGeometry(1.5, 0.1, 16, 100);
         const middleFrosting = new THREE.Mesh(middleFrostGeometry, frostingMaterial);
-        middleFrosting.position.y = 1.5;
+        middleFrosting.position.y = 1.0; // Bottom layer height + middle layer height
         middleFrosting.rotation.x = Math.PI / 2;
         cake.add(middleFrosting);
         
-        // Create top layer
+        // Create top layer - POSITION ADJUSTED
         const topGeometry = new THREE.CylinderGeometry(1, 1, 0.5, 32);
         const topLayer = new THREE.Mesh(topGeometry, topLayerMaterial);
-        topLayer.position.y = 1.25 + 0.75;
+        topLayer.position.y = 1.0 + 0.25; // Middle layer top + half of top layer height
         cake.add(topLayer);
         
-        // Top layer frosting
+        // Top layer frosting - POSITION ADJUSTED
         const topFrostGeometry = new THREE.TorusGeometry(1, 0.1, 16, 100);
         const topFrosting = new THREE.Mesh(topFrostGeometry, frostingMaterial);
-        topFrosting.position.y = 2.25;
+        topFrosting.position.y = 1.5; // Total height of all layers
         topFrosting.rotation.x = Math.PI / 2;
         cake.add(topFrosting);
         
         // Add decorations
         addDecorations();
+        
+        // REMOVE THIS LINE: addCandles();
         
         // Add the cake to the scene
         scene.add(cake);
@@ -222,7 +243,35 @@ function createCake() {
     }
 }
 
-// Add colored ball decorations to the cake
+
+
+
+// Add candles to the cake (optional enhancement)
+function addCandles() {
+    // Candle material
+    const candleMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
+    // Flame material with emissive property to make it glow
+    const flameMaterial = new THREE.MeshPhongMaterial({ 
+        color: 0xFF9900, 
+        emissive: 0xFF6600,
+        emissiveIntensity: 0.5
+    });
+    
+    // Add a center candle
+    const candleGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.5, 12);
+    const flameGeometry = new THREE.SphereGeometry(0.08, 12, 12);
+    
+    // Center candle
+    const centerCandle = new THREE.Mesh(candleGeometry, candleMaterial);
+    centerCandle.position.set(0, 1.75, 0); // Positioned on top of cake
+    cake.add(centerCandle);
+    
+    const centerFlame = new THREE.Mesh(flameGeometry, flameMaterial);
+    centerFlame.position.set(0, 2.05, 0); // Top of the candle
+    cake.add(centerFlame);
+}
+
+// Update the addDecorations function to match the new layer heights
 function addDecorations() {
     // Colors for the balls
     const colors = [
@@ -244,19 +293,19 @@ function addDecorations() {
         
         const ball = new THREE.Mesh(ballGeometry, ballMaterial);
         
-        // Position the ball on the cake
+        // Position the ball on the cake - UPDATED HEIGHTS
         const layerChoice = Math.floor(Math.random() * 3);
         let layerRadius, layerHeight;
         
         if (layerChoice === 0) {
             layerRadius = 2;
-            layerHeight = 0.5;
+            layerHeight = 0.5; // Top of bottom layer
         } else if (layerChoice === 1) {
             layerRadius = 1.5;
-            layerHeight = 1.5;
+            layerHeight = 1.0; // Top of middle layer
         } else {
             layerRadius = 1;
-            layerHeight = 2.25;
+            layerHeight = 1.5; // Top of top layer
         }
         
         // Random angle
@@ -271,6 +320,8 @@ function addDecorations() {
         cake.add(ball);
     }
 }
+
+
 
 // Animation loop
 function animate() {
@@ -287,17 +338,124 @@ function animate() {
     }
     
     // Render the scene
-    renderer.render(scene, camera);
+    if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+    }
 }
 
 // Handle window resize
 function onWindowResize() {
-    if (camera && renderer) {
+    if (camera && renderer && sceneContainer) {
         camera.aspect = sceneContainer.clientWidth / sceneContainer.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
     }
 }
 
+
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
+
+// Additional fix for browsers that might not trigger DOMContentLoaded correctly
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(init, 1);
+}
+
+// Add this function to your script.js file
+function implementManualControls() {
+    console.log("Implementing manual controls...");
+    
+    // Remove the existing event listeners if any
+    const canvas = renderer.domElement;
+    
+    // Basic manual rotation with mouse drag
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    
+    canvas.addEventListener('mousedown', function(event) {
+        isDragging = true;
+        previousMousePosition = { 
+            x: event.clientX, 
+            y: event.clientY 
+        };
+        event.preventDefault();
+    });
+    
+    canvas.addEventListener('mousemove', function(event) {
+        if (isDragging) {
+            const deltaMove = { 
+                x: event.clientX - previousMousePosition.x, 
+                y: event.clientY - previousMousePosition.y 
+            };
+            
+            if (cake) {
+                // Rotate cake based on mouse movement
+                cake.rotation.y += deltaMove.x * 0.01;
+                cake.rotation.x += deltaMove.y * 0.01;
+            }
+            
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+            
+            event.preventDefault();
+        }
+    });
+    
+    canvas.addEventListener('mouseup', function(event) {
+        isDragging = false;
+        event.preventDefault();
+    });
+    
+    canvas.addEventListener('mouseleave', function(event) {
+        isDragging = false;
+    });
+    
+    // Basic zoom with mouse wheel
+    canvas.addEventListener('wheel', function(event) {
+        if (camera) {
+            event.preventDefault();
+            
+            // Adjust camera position for zoom
+            const zoomSpeed = 0.1;
+            const delta = -Math.sign(event.deltaY) * zoomSpeed;
+            
+            camera.position.z += delta;
+            
+            // Limit how close/far the camera can go
+            camera.position.z = Math.max(3, Math.min(12, camera.position.z));
+        }
+    }, { passive: false });
+    
+    console.log("Manual controls implemented");
+}
+
+
+// Fix for OrbitControls initialization
+function fixOrbitControls() {
+    console.log("Fixing OrbitControls...");
+    
+    // If we already have a scene and camera but no working controls
+    if (scene && camera && renderer) {
+        try {
+            // Check if THREE.OrbitControls exists
+            if (typeof THREE.OrbitControls !== 'undefined') {
+                console.log("Creating new OrbitControls instance");
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;
+                console.log("OrbitControls created successfully");
+            } else {
+                console.error("THREE.OrbitControls is still not defined!");
+            }
+        } catch (error) {
+            console.error("Error creating OrbitControls:", error);
+        }
+    }
+    implementManualControls();
+}
+
+
+// Call this after a short delay to ensure Three.js and OrbitControls are fully loaded
+setTimeout(fixOrbitControls, 2000);

@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday Gao YuanYuan!</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Import Three.js -->
-    <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
-    <!-- Import OrbitControls -->
-    <script src="https://unpkg.com/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+<!-- Replace your current Three.js and OrbitControls imports with these lines -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.137.0/build/three.min.js"></script>
+<script>
+    // Make sure THREE is available globally before loading OrbitControls
+    window.THREE = window.THREE || {};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.137.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
     <!-- Initial envelope interface -->
@@ -22,13 +25,13 @@
     <div id="birthday-content">
         <div id="scene-container"></div>
         <div id="wishes-container">
-            <h1>Happy Birthday!</h1>
+            <h1>高媛媛🎂生日快乐🎉</h1>
             <div class="wishes-text">
-                <p>Dear Gao YuanYuan, on this special day, I want to wish you the happiest of birthdays! May this year bring you countless moments of joy, laughter, and beautiful memories. You deserve all the happiness the world has to offer, and I hope this birthday marks the beginning of an extraordinary year ahead.</p>
+                <p>我滴姐妹，祝你永远年轻快乐热烈美好</p>
                 
-                <p>Your presence brightens up every room you walk into, and your kindness touches everyone around you. I admire your strength, your passion, and your unwavering spirit. May you continue to grow, dream, and achieve all that your heart desires in this new chapter of your life.</p>
+                <p>健康涨球🏸</p>
                 
-                <p>As you blow out the candles, remember that each one represents a wish that we hope comes true for you. May good health, prosperity, and love accompany you throughout this year. Thank you for being the amazing person that you are. Happy Birthday, and here's to many more celebrations together!</p>
+                <p>🎂🎉</p>
             </div>
         </div>
     </div>
