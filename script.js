@@ -15,12 +15,14 @@ function init() {
     // Add window resize listener
     window.addEventListener('resize', onWindowResize);
     
-    // For testing - uncomment to immediately show cake without clicking envelope
-    // openEnvelope();
+    // For debugging - remove in production
+    console.log("Birthday card initialized!");
 }
 
 // Function to handle envelope click
 function openEnvelope() {
+    console.log("Envelope clicked!");
+    
     // Show confetti effect
     createConfetti();
     
@@ -99,39 +101,44 @@ function createConfetti() {
 function initThreeJs() {
     console.log("Initializing Three.js scene...");
     
-    // Create scene
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color('#FFF5EE');
-    
-    // Create camera
-    camera = new THREE.PerspectiveCamera(
-        75,
-        sceneContainer.clientWidth / sceneContainer.clientHeight,
-        0.1,
-        1000
-    );
-    camera.position.z = 7;
-    camera.position.y = 2;
-    
-    // Create renderer
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
-    sceneContainer.appendChild(renderer.domElement);
-    
-    // Add OrbitControls
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    
-    // Add lights
-    addLights();
-    
-    console.log("Creating cake...");
-    // Create the cake
-    createCake();
-    
-    // Start animation loop
-    animate();
+    try {
+        // Create scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#FFF5EE');
+        
+        // Create camera
+        camera = new THREE.PerspectiveCamera(
+            75,
+            sceneContainer.clientWidth / sceneContainer.clientHeight,
+            0.1,
+            1000
+        );
+        camera.position.z = 7;
+        camera.position.y = 2;
+        
+        // Create renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
+        sceneContainer.appendChild(renderer.domElement);
+        
+        // Add OrbitControls
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        
+        // Add lights
+        addLights();
+        
+        // Create the cake
+        createCake();
+        
+        // Start animation loop
+        animate();
+        
+        console.log("Three.js scene initialized successfully!");
+    } catch (error) {
+        console.error("Error initializing Three.js scene:", error);
+    }
 }
 
 // Add lights to the scene
@@ -153,99 +160,66 @@ function addLights() {
 
 // Create the birthday cake model
 function createCake() {
-    // Create a group to hold all cake elements
-    cake = new THREE.Group();
+    console.log("Creating cake model...");
     
-    // Materials
-    const bottomLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xCD5C5C });
-    const middleLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA07A });
-    const topLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xFFDAB9 });
-    const frostingMaterial = new THREE.MeshPhongMaterial({ color: 0xFFEFD5 });
-    
-    // Create bottom layer
-    const bottomGeometry = new THREE.CylinderGeometry(2, 2, 0.5, 32);
-    const bottomLayer = new THREE.Mesh(bottomGeometry, bottomLayerMaterial);
-    bottomLayer.position.y = 0.25;
-    cake.add(bottomLayer);
-    
-    // Bottom layer frosting
-    const bottomFrostGeometry = new THREE.TorusGeometry(2, 0.1, 16, 100);
-    const bottomFrosting = new THREE.Mesh(bottomFrostGeometry, frostingMaterial);
-    bottomFrosting.position.y = 0.5;
-    bottomFrosting.rotation.x = Math.PI / 2;
-    cake.add(bottomFrosting);
-    
-    // Create middle layer
-    const middleGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.5, 32);
-    const middleLayer = new THREE.Mesh(middleGeometry, middleLayerMaterial);
-    middleLayer.position.y = 0.75 + 0.25;
-    cake.add(middleLayer);
-    
-    // Middle layer frosting
-    const middleFrostGeometry = new THREE.TorusGeometry(1.5, 0.1, 16, 100);
-    const middleFrosting = new THREE.Mesh(middleFrostGeometry, frostingMaterial);
-    middleFrosting.position.y = 1.5;
-    middleFrosting.rotation.x = Math.PI / 2;
-    cake.add(middleFrosting);
-    
-    // Create top layer
-    const topGeometry = new THREE.CylinderGeometry(1, 1, 0.5, 32);
-    const topLayer = new THREE.Mesh(topGeometry, topLayerMaterial);
-    topLayer.position.y = 1.25 + 0.75;
-    cake.add(topLayer);
-    
-    // Top layer frosting
-    const topFrostGeometry = new THREE.TorusGeometry(1, 0.1, 16, 100);
-    const topFrosting = new THREE.Mesh(topFrostGeometry, frostingMaterial);
-    topFrosting.position.y = 2.25;
-    topFrosting.rotation.x = Math.PI / 2;
-    cake.add(topFrosting);
-    
-    // Add decorations
-    addDecorations();
-    
-    // Add candles
-    addCandles();
-    
-    // Add the cake to the scene
-    scene.add(cake);
-    console.log("Cake added to scene!");
-}
-
-// Add candles to the cake
-function addCandles() {
-    // Candle material (white)
-    const candleMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFFFF });
-    // Flame material (orange with emissive)
-    const flameMaterial = new THREE.MeshPhongMaterial({
-        color: 0xFF8C00,
-        emissive: 0xFF4500,
-        emissiveIntensity: 0.8
-    });
-    
-    // Center candle
-    createCandle(0, 0, 2.5, candleMaterial, flameMaterial);
-    
-    // Surrounding candles (cross pattern)
-    createCandle(0.5, 0, 2.5, candleMaterial, flameMaterial);
-    createCandle(-0.5, 0, 2.5, candleMaterial, flameMaterial);
-    createCandle(0, 0.5, 2.5, candleMaterial, flameMaterial);
-    createCandle(0, -0.5, 2.5, candleMaterial, flameMaterial);
-}
-
-// Helper function to create a candle with flame
-function createCandle(x, z, y, candleMaterial, flameMaterial) {
-    // Candle stick
-    const candleGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.4, 16);
-    const candle = new THREE.Mesh(candleGeometry, candleMaterial);
-    candle.position.set(x, y, z);
-    cake.add(candle);
-    
-    // Flame
-    const flameGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-    const flame = new THREE.Mesh(flameGeometry, flameMaterial);
-    flame.position.set(x, y + 0.25, z);
-    cake.add(flame);
+    try {
+        // Create a group to hold all cake elements
+        cake = new THREE.Group();
+        
+        // Materials
+        const bottomLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xCD5C5C });
+        const middleLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xFFA07A });
+        const topLayerMaterial = new THREE.MeshPhongMaterial({ color: 0xFFDAB9 });
+        const frostingMaterial = new THREE.MeshPhongMaterial({ color: 0xFFEFD5 });
+        
+        // Create bottom layer
+        const bottomGeometry = new THREE.CylinderGeometry(2, 2, 0.5, 32);
+        const bottomLayer = new THREE.Mesh(bottomGeometry, bottomLayerMaterial);
+        bottomLayer.position.y = 0.25;
+        cake.add(bottomLayer);
+        
+        // Bottom layer frosting
+        const bottomFrostGeometry = new THREE.TorusGeometry(2, 0.1, 16, 100);
+        const bottomFrosting = new THREE.Mesh(bottomFrostGeometry, frostingMaterial);
+        bottomFrosting.position.y = 0.5;
+        bottomFrosting.rotation.x = Math.PI / 2;
+        cake.add(bottomFrosting);
+        
+        // Create middle layer
+        const middleGeometry = new THREE.CylinderGeometry(1.5, 1.5, 0.5, 32);
+        const middleLayer = new THREE.Mesh(middleGeometry, middleLayerMaterial);
+        middleLayer.position.y = 0.75 + 0.25;
+        cake.add(middleLayer);
+        
+        // Middle layer frosting
+        const middleFrostGeometry = new THREE.TorusGeometry(1.5, 0.1, 16, 100);
+        const middleFrosting = new THREE.Mesh(middleFrostGeometry, frostingMaterial);
+        middleFrosting.position.y = 1.5;
+        middleFrosting.rotation.x = Math.PI / 2;
+        cake.add(middleFrosting);
+        
+        // Create top layer
+        const topGeometry = new THREE.CylinderGeometry(1, 1, 0.5, 32);
+        const topLayer = new THREE.Mesh(topGeometry, topLayerMaterial);
+        topLayer.position.y = 1.25 + 0.75;
+        cake.add(topLayer);
+        
+        // Top layer frosting
+        const topFrostGeometry = new THREE.TorusGeometry(1, 0.1, 16, 100);
+        const topFrosting = new THREE.Mesh(topFrostGeometry, frostingMaterial);
+        topFrosting.position.y = 2.25;
+        topFrosting.rotation.x = Math.PI / 2;
+        cake.add(topFrosting);
+        
+        // Add decorations
+        addDecorations();
+        
+        // Add the cake to the scene
+        scene.add(cake);
+        console.log("Cake added to scene successfully!");
+    } catch (error) {
+        console.error("Error creating cake:", error);
+    }
 }
 
 // Add colored ball decorations to the cake
@@ -323,12 +297,6 @@ function onWindowResize() {
         camera.updateProjectionMatrix();
         renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
     }
-}
-
-// For debugging
-function logSceneContent() {
-    console.log("Scene children:", scene.children);
-    console.log("Cake children:", cake ? cake.children : "Cake not created yet");
 }
 
 // Initialize the application when the DOM is loaded
