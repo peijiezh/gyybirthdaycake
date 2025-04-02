@@ -1,33 +1,34 @@
-/* Global styles */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
 }
 
 body {
+    font-family: Arial, sans-serif;
     background-color: #FFF5EE;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
-/* Envelope styles */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    padding: 20px;
+}
+
+/* Envelope Styles */
 #envelope-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
     height: 100vh;
-    position: absolute;
-    z-index: 10;
-    transition: opacity 1s ease;
 }
 
-#envelope {
+.envelope {
     width: 300px;
     height: 200px;
     background-color: #FFB6C1;
@@ -36,15 +37,15 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
-#envelope:hover {
+.envelope:hover {
     transform: scale(1.05);
 }
 
-#envelope::before {
+.envelope::before {
     content: '';
     position: absolute;
     top: -50px;
@@ -58,162 +59,77 @@ body {
     transition: transform 0.3s ease;
 }
 
-#envelope:hover::before {
+.envelope:hover::before {
     transform: rotateX(30deg);
 }
 
-#envelope .text {
+.envelope-content {
     color: #333;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     text-align: center;
 }
 
-/* Birthday content (3D scene and wishes) */
-#birthday-content {
-    display: none;
-    width: 100%;
-    height: 100vh;
-    flex-direction: row;
-    justify-content: center;
+/* Birthday Card Styles */
+#birthday-card {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 30px;
-    padding: 20px;
+    width: 100%;
+    transition: opacity 0.5s ease;
 }
 
-#scene-container {
-    flex: 1;
-    height: 80vh;
-    max-width: 800px;
-    min-width: 300px;
+@media (min-width: 768px) {
+    #birthday-card {
+        flex-direction: row;
+        justify-content: space-between;
+    }
 }
 
-#wishes-container {
-    width: 300px;
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
+
+#cake-container {
+    width: 100%;
+    height: 400px;
+}
+
+@media (min-width: 768px) {
+    #cake-container {
+        width: 60%;
+    }
+}
+
+.wishes-card {
     background-color: white;
+    width: 100%;
+    max-width: 300px;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
-#wishes-container h1 {
+@media (min-width: 768px) {
+    .wishes-card {
+        margin-top: 0;
+        margin-left: 20px;
+    }
+}
+
+.wishes-card h1 {
     color: #FF69B4;
-    margin-bottom: 20px;
     text-align: center;
+    margin-bottom: 15px;
+}
+
+.wishes-text {
+    color: #333;
+    line-height: 1.6;
 }
 
 .wishes-text p {
-    color: #333;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    #birthday-content {
-        flex-direction: column;
-    }
-
-    #scene-container {
-        width: 100%;
-        height: 50vh;
-    }
-
-    #wishes-container {
-        width: 100%;
-        max-width: 400px;
-    }
-}
-
-
-/* Mobile-specific styles */
-@media screen and (max-width: 768px) {
-    /* Layout changes for mobile */
-    #birthday-content {
-        flex-direction: column;
-        padding: 10px;
-    }
-    
-    #scene-container {
-        height: 60vh;
-        width: 100%;
-        min-width: auto;
-    }
-    
-    #wishes-container {
-        width: 100%;
-        margin-top: 15px;
-        padding: 15px;
-    }
-    
-    /* Envelope adjustments for smaller screens */
-    #envelope {
-        width: 250px;
-        height: 170px;
-    }
-    
-    #envelope::before {
-        border-left: 125px solid transparent;
-        border-right: 125px solid transparent;
-        border-bottom: 45px solid #FFB6C1;
-        top: -45px;
-    }
-}
-
-/* iPhone-specific styles */
-@media screen and (max-width: 414px) {
-    #envelope {
-        width: 220px;
-        height: 150px;
-    }
-    
-    #envelope::before {
-        border-left: 110px solid transparent;
-        border-right: 110px solid transparent;
-        border-bottom: 40px solid #FFB6C1;
-        top: -40px;
-    }
-    
-    #wishes-container h1 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
-    
-    .wishes-text p {
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-    }
-}
-
-/* Fix for touch devices */
-@media (hover: none) and (pointer: coarse) {
-    #envelope:hover {
-        transform: scale(1.02); /* Smaller scale effect for touch devices */
-    }
-    
-    #envelope:active {
-        transform: scale(1.05);
-    }
-}
-
-
-/* Mobile device specific class */
-body.mobile-device {
-    /* Fixed height to avoid issues with browser chrome appearing/disappearing */
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-}
-
-/* Fix for iOS Safari 100vh issues */
-@supports (-webkit-touch-callout: none) {
-    #envelope-container, #birthday-content {
-        height: -webkit-fill-available;
-    }
-}
-
-/* Ensure the canvas can be interacted with properly on mobile */
-canvas {
-    touch-action: none;
+    margin-bottom: 10px;
 }
