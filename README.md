@@ -1,4 +1,3 @@
-Please create an interactive birthday card HTML webpage with the following functionalities and features:
 
 **Overall Requirements:**
 
