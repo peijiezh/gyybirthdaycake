@@ -2,39 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Happy Birthday Gao YuanYuan!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday for Gao LinYuan</title>
     <link rel="stylesheet" href="styles.css">
-<!-- Replace your current Three.js and OrbitControls imports with these lines -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.137.0/build/three.min.js"></script>
-<script>
-    // Make sure THREE is available globally before loading OrbitControls
-    window.THREE = window.THREE || {};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.137.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <!-- Initial envelope interface -->
-    <div id="envelope-container">
-        <div id="envelope">
-            <div class="text">Click to Open</div>
+    <div class="container">
+        <div id="envelope-container">
+            <div class="envelope">
+                <div class="envelope-content">Click to Open</div>
+            </div>
         </div>
-    </div>
-
-    <!-- 3D scene and birthday wishes container (initially hidden) -->
-    <div id="birthday-content">
-        <div id="scene-container"></div>
-        <div id="wishes-container">
-            <h1>高媛媛🎂生日快乐🎉</h1>
-            <div class="wishes-text">
-                <p>我滴姐妹，祝你永远年轻快乐热烈美好</p>
-                
-                <p>健康涨球🏸</p>
-                
-                <p>🎂🎉</p>
+        
+        <div id="birthday-card" class="hidden">
+            <div id="cake-container"></div>
+            <div class="wishes-card">
+                <h1>Happy Birthday!</h1>
+                <div class="wishes-text">
+                    <p>亲爱的媛媛,</p>
+                    <p>生日快乐🎂</p>
+                    <p>祝我滴好姐妹永远年轻热烈快乐🎉</p>
+                    <p>身体健康吃嘛嘛香</p>
+                    <p>送你一个赛博蛋糕，可以旋转放大🍰</p>
+                    <p>永远爱你😘</p>
+                </div>
             </div>
         </div>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
